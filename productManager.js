@@ -1,9 +1,41 @@
+//manejo de archivos
+const fs = require('fs'); 
+
 class PoductManager {
     #products;
+    #path;
     static idProducto = 0;
 
     constructor (){
-        this.#products = [];
+        this.#path = './data/productos.json';
+        this.#products = this.#leerProductosInFile();
+
+    }
+
+    #asignarIdProducto() {
+        let id = 1;
+        if(this.#products.length != 0)
+        id = this.#products[this.#products.length-1].id + 1;
+        return id;
+    }
+
+    #leerProductosInFile() {
+        try {
+            if(fs.existsSync(this.#path)) 
+                return JSON.parse(fs.readFileSync(this.#path,'utf-8'));
+            
+            return[];
+        } catch (error) {
+            console.log('ocurrio un error al leer el archivo de productos, ${error}');
+        }
+    }
+
+    #guardaArchivo(){
+        try {
+            fs.writeFileSync(this.#path, JSON.stringify(this.#products))
+        } catch (error) {
+            console.log('ocurrio un error al guardar el archivo de productos, ${error}');
+        }
     }
 
     addProduct (title, description, price, thumbnail, code, stock) {
@@ -15,7 +47,8 @@ class PoductManager {
                     return 'The code ${code} is already registered in another product';
                 
                 PoductManager.idProducto = PoductManager.idProducto + 1;
-                const id = PoductManager.idProducto;
+                const id = this.#asignarIdProducto();
+
                 const newProduct = {
                     id,
                     title,
@@ -26,6 +59,8 @@ class PoductManager {
                     stock
                 };
                 this.#products.push(newProduct);
+                this.#guardaArchivo();
+
                     return '¡The product was added!';
     }
 
@@ -41,6 +76,33 @@ class PoductManager {
                 return producto;
             else
                 return "Not found is ${id}";
+    }
+
+    updateProduct(id, objetUpdate) {
+        let msg = 'El producto con id ${id} no existe';
+
+        const index = this.#products.findIndex(p=> p.id === id);
+
+        if(index !== -1) {
+            const {id, ...rest} = objetUpdate;
+            this.#products[index] = {...this.#products[index], ...rest};
+            this.#guardaArchivo();
+            msg = 'Producto actualizado'
+        }
+        return msg;
+    }
+
+    deleteProduct(id) {
+        let msg = 'El porducto con ese id ${id} no existe';
+
+        const index = this.#products.findIndex(p=> p.id === id);
+        if(index !== -1) {
+            this.#products = this.#products.filter(p=> p.id !== id);
+            this.#guardaArchivo();
+            msg = 'Producto eliminado'
+        }
+
+        return msg;
     }
 }
 
