@@ -1,5 +1,5 @@
 //manejo de archivos
-const fs = require('fs'); 
+const fs = require ('fs'); 
 
 class PoductManager {
     #products;
@@ -26,7 +26,7 @@ class PoductManager {
             
             return[];
         } catch (error) {
-            console.log('ocurrio un error al leer el archivo de productos, ${error}');
+            console.log(`ocurrio un error al leer el archivo de productos, ${error}`);
         }
     }
 
@@ -34,7 +34,7 @@ class PoductManager {
         try {
             fs.writeFileSync(this.#path, JSON.stringify(this.#products))
         } catch (error) {
-            console.log('ocurrio un error al guardar el archivo de productos, ${error}');
+            console.log(`ocurrio un error al guardar el archivo de productos, ${error}`);
         }
     }
 
