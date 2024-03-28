@@ -1,5 +1,6 @@
 //manejo de archivos
-const fs = require ('fs'); 
+//const fs = require ('fs'); 
+import fs from 'fs';
 
 class PoductManager {
     #products;
@@ -7,7 +8,7 @@ class PoductManager {
     static idProducto = 0;
 
     constructor (){
-        this.#path = './data/productos.json';
+        this.#path = './src/data/productos.json';
         this.#products = this.#leerProductosInFile();
 
     }
@@ -64,8 +65,11 @@ class PoductManager {
                     return '¡The product was added!';
     }
 
-    getProduct () {
-        //devolver todos los productos 
+    
+    getProduct(limit = 0) {
+        limit = Number(limit);
+        if (limit > 0)
+            return this.#products.slice(0, limit); 
         return this.#products;
     }
 
@@ -106,5 +110,5 @@ class PoductManager {
     }
 }
 
-module.exports = PoductManager;
-
+//module.exports = PoductManager;
+export default PoductManager;
